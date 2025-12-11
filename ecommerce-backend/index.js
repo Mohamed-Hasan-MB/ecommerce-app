@@ -7,16 +7,18 @@ import dotenv from "dotenv";
 dotenv.config();
 import { connectMongo } from "./src/db/mongo.js";
 import productsRouter from "./src/routes/products.js";
-
+import authRouter, { authGuard } from "./src/routes/auth.js";
 
 
 // 3) Create the Express app
 const app = express();
-
-app.use("/products", productsRouter);
-
-// 4) Allow JSON request bodies (e.g., POST with JSON)
 app.use(express.json());
+app.use("/products", productsRouter);
+app.use("/auth", authRouter);
+
+app.get("/me", authGuard, (req, res) => {
+  res.json({ userId: req.user.sub, roles: req.user.roles });
+});//auth guard example
 
 // 5) Enable CORS (so your React frontend can call this API)
 app.use(cors({ origin: "*"})); // in dev, allow all. Later restrict.
