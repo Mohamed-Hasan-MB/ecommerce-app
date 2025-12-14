@@ -8,13 +8,14 @@ dotenv.config();
 import { connectMongo } from "./src/db/mongo.js";
 import productsRouter from "./src/routes/products.js";
 import authRouter, { authGuard } from "./src/routes/auth.js";
-
+import cartRouter from "./src/routes/cart.js";
 
 // 3) Create the Express app
 const app = express();
 app.use(express.json());
 app.use("/products", productsRouter);
 app.use("/auth", authRouter);
+app.use("/cart", cartRouter);
 
 app.get("/me", authGuard, (req, res) => {
   res.json({ userId: req.user.sub, roles: req.user.roles });
