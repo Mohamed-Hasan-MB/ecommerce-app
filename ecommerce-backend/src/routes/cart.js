@@ -8,12 +8,14 @@ const router = Router();
 /**
  * 1) Get current user's cart (create if missing)
  */
-router.get("/", authGuard, async (req, res) => {
-  let cart = await Cart.findOne({ userId: req.user.sub });
-  if (!cart) {
-    cart = await Cart.create({ userId: req.user.sub, items: [] });
+router.get("/items", authGuard, async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ userId: req.user.sub }).populate("items.productId");
+    if (!cart) return res.status(404).json({ error: "Cart not found" });
+    res.json(cart.items);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  res.json(cart);
 });
 
 /**
